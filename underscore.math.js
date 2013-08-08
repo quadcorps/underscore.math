@@ -124,17 +124,29 @@
     return _(arr).map(zscore);
   };
 
+  // math.movingWindowMap([1,2,3,4,5], 3, _.sum)
+  //   => [6,9,12]
+  math.movingWindowMap = function(arr, size, fn) {
+      var win, i, newarr = [];
+      for(i = size-1; i <= arr.length; i++) {
+          win = arr.slice(i-size, i);
+          if (win.length === size) {
+              newarr.push(fn(win));
+          }
+      }
+      return newarr;
+  };
+
   // math.movingAvg([1,2,3,4,5], 3);
   //   => [2,3,4]
   math.movingAvg = function(arr, size) {
-    var win, i, newarr = [];
-    for(i = size-1; i <= arr.length; i++) {
-      win = arr.slice(i-size, i);
-      if (win.length === size) {
-        newarr.push(_.mean(win)); 
-      }
-    }
-    return newarr;
+      return math.movingWindowMap(arr, size, _.mean);
+  };
+
+  // math.stdDeviation([1,2,3,1,2])
+  //   => [0.816496580927726, 0.816496580927726, 0.816496580927726]
+  math.movingStdDeviation = function(arr, size) {
+      return math.movingWindowMap(arr, size, math.stdDeviation);
   };
   
   // add methods to Underscore.js namespace
